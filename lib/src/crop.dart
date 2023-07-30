@@ -539,100 +539,115 @@ class _CropEditorState extends State<_CropEditor> {
                 Positioned(
                   left: _rect.left,
                   top: _rect.top,
-                  child: GestureDetector(
-                    onPanUpdate: (details) {
-                      rect = calculator.moveRect(
-                        _rect,
-                        details.delta.dx,
-                        details.delta.dy,
-                        _imageRect,
-                      );
-                    },
-                    child: Container(
-                      width: _rect.width,
-                      height: _rect.height,
-                      color: Colors.transparent,
+                  child: MouseRegion(
+                    cursor: SystemMouseCursors.move,
+                    child: GestureDetector(
+                      onPanUpdate: (details) {
+                        rect = calculator.moveRect(
+                          _rect,
+                          details.delta.dx,
+                          details.delta.dy,
+                          _imageRect,
+                        );
+                      },
+                      child: Container(
+                        width: _rect.width,
+                        height: _rect.height,
+                        color: Colors.transparent,
+                      ),
                     ),
                   ),
                 ),
               Positioned(
                 left: _rect.left - (dotTotalSize / 2),
                 top: _rect.top - (dotTotalSize / 2),
-                child: GestureDetector(
-                  onPanUpdate: widget.fixArea
-                      ? null
-                      : (details) {
-                          rect = calculator.moveTopLeft(
-                            _rect,
-                            details.delta.dx,
-                            details.delta.dy,
-                            _imageRect,
-                            _aspectRatio,
-                          );
-                        },
-                  child: widget.cornerDotBuilder
-                          ?.call(dotTotalSize, EdgeAlignment.topLeft) ??
-                      const DotControl(),
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.resizeUpLeft,
+                  child: GestureDetector(
+                    onPanUpdate: widget.fixArea
+                        ? null
+                        : (details) {
+                            rect = calculator.moveTopLeft(
+                              _rect,
+                              details.delta.dx,
+                              details.delta.dy,
+                              _imageRect,
+                              _aspectRatio,
+                            );
+                          },
+                    child: widget.cornerDotBuilder
+                            ?.call(dotTotalSize, EdgeAlignment.topLeft) ??
+                        const DotControl(),
+                  ),
                 ),
               ),
               Positioned(
                 left: _rect.right - (dotTotalSize / 2),
                 top: _rect.top - (dotTotalSize / 2),
-                child: GestureDetector(
-                  onPanUpdate: widget.fixArea
-                      ? null
-                      : (details) {
-                          rect = calculator.moveTopRight(
-                            _rect,
-                            details.delta.dx,
-                            details.delta.dy,
-                            _imageRect,
-                            _aspectRatio,
-                          );
-                        },
-                  child: widget.cornerDotBuilder
-                          ?.call(dotTotalSize, EdgeAlignment.topRight) ??
-                      const DotControl(),
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.resizeUpRight,
+                  child: GestureDetector(
+                    onPanUpdate: widget.fixArea
+                        ? null
+                        : (details) {
+                            rect = calculator.moveTopRight(
+                              _rect,
+                              details.delta.dx,
+                              details.delta.dy,
+                              _imageRect,
+                              _aspectRatio,
+                            );
+                          },
+                    child: widget.cornerDotBuilder
+                            ?.call(dotTotalSize, EdgeAlignment.topRight) ??
+                        const DotControl(),
+                  ),
                 ),
               ),
               Positioned(
                 left: _rect.left - (dotTotalSize / 2),
                 top: _rect.bottom - (dotTotalSize / 2),
-                child: GestureDetector(
-                  onPanUpdate: widget.fixArea
-                      ? null
-                      : (details) {
-                          rect = calculator.moveBottomLeft(
-                            _rect,
-                            details.delta.dx,
-                            details.delta.dy,
-                            _imageRect,
-                            _aspectRatio,
-                          );
-                        },
-                  child: widget.cornerDotBuilder
-                          ?.call(dotTotalSize, EdgeAlignment.bottomLeft) ??
-                      const DotControl(),
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.resizeDownLeft,
+                  child: GestureDetector(
+                    onPanUpdate: widget.fixArea
+                        ? null
+                        : (details) {
+                            rect = calculator.moveBottomLeft(
+                              _rect,
+                              details.delta.dx,
+                              details.delta.dy,
+                              _imageRect,
+                              _aspectRatio,
+                            );
+                          },
+                    child: widget.cornerDotBuilder
+                            ?.call(dotTotalSize, EdgeAlignment.bottomLeft) ??
+                        const DotControl(),
+                  ),
                 ),
               ),
               Positioned(
                 left: _rect.right - (dotTotalSize / 2),
                 top: _rect.bottom - (dotTotalSize / 2),
-                child: GestureDetector(
-                  onPanUpdate: widget.fixArea
-                      ? null
-                      : (details) {
-                          rect = calculator.moveBottomRight(
-                            _rect,
-                            details.delta.dx,
-                            details.delta.dy,
-                            _imageRect,
-                            _aspectRatio,
-                          );
-                        },
-                  child: widget.cornerDotBuilder
-                          ?.call(dotTotalSize, EdgeAlignment.bottomRight) ??
-                      const DotControl(),
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.resizeDownRight,
+                  child: GestureDetector(
+                    onPanUpdate: widget.fixArea
+                        ? null
+                        : (details) {
+                            rect = calculator.moveBottomRight(
+                              _rect,
+                              details.delta.dx,
+                              details.delta.dy,
+                              _imageRect,
+                              _aspectRatio,
+                            );
+                          },
+                    child: widget.cornerDotBuilder
+                            ?.call(dotTotalSize, EdgeAlignment.bottomRight) ??
+                        const DotControl(),
+                  ),
                 ),
               ),
             ],
