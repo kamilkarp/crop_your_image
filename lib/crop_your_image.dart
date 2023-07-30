@@ -1,6 +1,7 @@
 library crop_your_image;
 
 import 'dart:math';
+import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,3 +11,4 @@ part 'src/crop.dart';
 part 'src/controller.dart';
 part 'src/calculator.dart';
 part 'src/edge_alignment.dart';
+part 'src/dashed_path.dart';

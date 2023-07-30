@@ -512,14 +512,26 @@ class _CropEditorState extends State<_CropEditor> {
                 ),
               ),
               IgnorePointer(
-                child: ClipPath(
-                  clipper: _withCircleUi
-                      ? _CircleCropAreaClipper(_rect)
-                      : _CropAreaClipper(_rect, widget.radius),
-                  child: Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    color: widget.maskColor ?? Colors.black.withAlpha(100),
+                child: CustomPaint(
+                  foregroundPainter: DashedPathPainter(
+                    strokeWidth: 1,
+                    dashGapLength: 4,
+                    dashLength: 4,
+                    originalPath: (size) => _withCircleUi
+                        ? _createCirclePath(size, _rect, addViewportPath: false)
+                        : _createSquarePath(size, _rect, widget.radius,
+                            addViewportPath: false),
+                    pathColor: Colors.white,
+                  ),
+                  child: ClipPath(
+                    clipper: _withCircleUi
+                        ? _CircleCropAreaClipper(_rect)
+                        : _CropAreaClipper(_rect, widget.radius),
+                    child: Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      color: widget.maskColor ?? Colors.black.withAlpha(100),
+                    ),
                   ),
                 ),
               ),
@@ -636,30 +648,41 @@ class _CropAreaClipper extends CustomClipper<Path> {
 
   @override
   Path getClip(Size size) {
-    return Path()
-      ..addPath(
-        Path()
-          ..moveTo(rect.left, rect.top + radius)
-          ..arcToPoint(Offset(rect.left + radius, rect.top),
-              radius: Radius.circular(radius))
-          ..lineTo(rect.right - radius, rect.top)
-          ..arcToPoint(Offset(rect.right, rect.top + radius),
-              radius: Radius.circular(radius))
-          ..lineTo(rect.right, rect.bottom - radius)
-          ..arcToPoint(Offset(rect.right - radius, rect.bottom),
-              radius: Radius.circular(radius))
-          ..lineTo(rect.left + radius, rect.bottom)
-          ..arcToPoint(Offset(rect.left, rect.bottom - radius),
-              radius: Radius.circular(radius))
-          ..close(),
-        Offset.zero,
-      )
-      ..addRect(Rect.fromLTWH(0.0, 0.0, size.width, size.height))
-      ..fillType = PathFillType.evenOdd;
+    return _createSquarePath(size, rect, radius, addViewportPath: true);
   }
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => true;
+}
+
+Path _createSquarePath(Size size, Rect rect, double radius,
+    {required bool addViewportPath}) {
+  final path = Path()
+    ..addPath(
+      Path()
+        ..moveTo(rect.left, rect.top + radius)
+        ..arcToPoint(Offset(rect.left + radius, rect.top),
+            radius: Radius.circular(radius))
+        ..lineTo(rect.right - radius, rect.top)
+        ..arcToPoint(Offset(rect.right, rect.top + radius),
+            radius: Radius.circular(radius))
+        ..lineTo(rect.right, rect.bottom - radius)
+        ..arcToPoint(Offset(rect.right - radius, rect.bottom),
+            radius: Radius.circular(radius))
+        ..lineTo(rect.left + radius, rect.bottom)
+        ..arcToPoint(Offset(rect.left, rect.bottom - radius),
+            radius: Radius.circular(radius))
+        ..close(),
+      Offset.zero,
+    );
+
+  if (addViewportPath) {
+    path.addRect(Rect.fromLTWH(0.0, 0.0, size.width, size.height));
+  }
+
+  path.fillType = PathFillType.evenOdd;
+
+  return path;
 }
 
 class _CircleCropAreaClipper extends CustomClipper<Path> {
@@ -669,14 +692,24 @@ class _CircleCropAreaClipper extends CustomClipper<Path> {
 
   @override
   Path getClip(Size size) {
-    return Path()
-      ..addOval(Rect.fromCircle(center: rect.center, radius: rect.width / 2))
-      ..addRect(Rect.fromLTWH(0.0, 0.0, size.width, size.height))
-      ..fillType = PathFillType.evenOdd;
+    return _createCirclePath(size, rect, addViewportPath: true);
   }
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => true;
+}
+
+Path _createCirclePath(Size size, Rect rect, {required bool addViewportPath}) {
+  final path = Path()
+    ..addOval(Rect.fromCircle(center: rect.center, radius: rect.width / 2));
+
+  if (addViewportPath) {
+    path.addRect(Rect.fromLTWH(0.0, 0.0, size.width, size.height));
+  }
+
+  path.fillType = PathFillType.evenOdd;
+
+  return path;
 }
 
 /// Defalt dot widget placed on corners to control cropping area.
