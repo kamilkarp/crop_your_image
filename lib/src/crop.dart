@@ -55,6 +55,13 @@ class Crop extends StatelessWidget {
   /// Callback called when cropping area moved.
   final ValueChanged<Rect>? onMoved;
 
+  /// Callback called when cropping area
+  /// in relation to the image dimensions changes.
+  ///
+  /// You can use it to get area that user wants to crop
+  /// and outsource the actual cropping to another service
+  final ValueChanged<Rect>? onImageCropAreaChanged;
+
   /// Callback called when status of Crop widget is changed.
   ///
   /// note: Currently, the very first callback is [CropStatus.ready]
@@ -100,6 +107,7 @@ class Crop extends StatelessWidget {
     this.withCircleUi = false,
     this.controller,
     this.onMoved,
+    this.onImageCropAreaChanged,
     this.onStatusChanged,
     this.maskColor,
     this.baseColor = Colors.white,
@@ -131,6 +139,7 @@ class Crop extends StatelessWidget {
             withCircleUi: withCircleUi,
             controller: controller,
             onMoved: onMoved,
+            onImageCropAreaChanged: onImageCropAreaChanged,
             onStatusChanged: onStatusChanged,
             maskColor: maskColor,
             baseColor: baseColor,
@@ -156,6 +165,7 @@ class _CropEditor extends StatefulWidget {
   final bool withCircleUi;
   final CropController? controller;
   final ValueChanged<Rect>? onMoved;
+  final ValueChanged<Rect>? onImageCropAreaChanged;
   final ValueChanged<CropStatus>? onStatusChanged;
   final Color? maskColor;
   final Color baseColor;
@@ -176,6 +186,7 @@ class _CropEditor extends StatefulWidget {
     this.withCircleUi = false,
     this.controller,
     this.onMoved,
+    this.onImageCropAreaChanged,
     this.onStatusChanged,
     this.maskColor,
     required this.baseColor,
@@ -212,6 +223,7 @@ class _CropEditorState extends State<_CropEditor> {
       _rect = newRect;
     });
     widget.onMoved?.call(_rect);
+    _onMovedNotifyNewCropArea();
   }
 
   // for zooming
@@ -442,6 +454,24 @@ class _CropEditorState extends State<_CropEditor> {
     widget.onCropped(cropResult);
 
     widget.onStatusChanged?.call(CropStatus.ready);
+  }
+
+  void _onMovedNotifyNewCropArea() {
+    if (_targetImage == null) return;
+
+    final screenSizeRatio = calculator.screenSizeRatio(
+      _targetImage!,
+      MediaQuery.of(context).size,
+    );
+
+    widget.onImageCropAreaChanged?.call(
+      Rect.fromLTWH(
+        (_rect.left - _imageRect.left) * screenSizeRatio / _scale,
+        (_rect.top - _imageRect.top) * screenSizeRatio / _scale,
+        _rect.width * screenSizeRatio / _scale,
+        _rect.height * screenSizeRatio / _scale,
+      ),
+    );
   }
 
   @override
